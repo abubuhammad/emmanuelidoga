@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { supabase, supabaseEnabled } from "../lib/supabase.js";
 
 const panelClass = "rounded-3xl border border-line bg-surface/80 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-sm";
 const inputClass = "surface w-full rounded-2xl border border-line px-3 py-2.5 text-sm text-ink outline-none placeholder:text-muted transition focus:border-accent-project focus:ring-2 focus:ring-accent-project/20";
@@ -101,18 +102,13 @@ export default function Admin({ profile, onSave }) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!window?.supabase && !window?.__SUPABASE__) {
+    if (!supabaseEnabled || !supabase) {
       setStatus({ type: "error", message: "Configure Supabase before uploading a CV file." });
       event.target.value = "";
       return;
     }
 
     try {
-      const { supabase } = await import("../lib/supabase.js");
-      if (!supabase) {
-        throw new Error("Supabase is not configured for file uploads.");
-      }
-
       const bucketName = "resumes";
       const { data: bucketData } = await supabase.storage.listBuckets();
       const bucketExists = bucketData?.some((bucket) => bucket.name === bucketName);
