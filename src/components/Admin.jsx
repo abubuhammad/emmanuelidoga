@@ -102,6 +102,15 @@ export default function Admin({ profile, onSave }) {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const fileName = file.name.toLowerCase();
+    const isPdf = file.type === "application/pdf" || fileName.endsWith(".pdf");
+
+    if (!isPdf) {
+      setStatus({ type: "error", message: "Please upload a PDF CV file only." });
+      event.target.value = "";
+      return;
+    }
+
     if (!supabaseEnabled || !supabase) {
       setStatus({ type: "error", message: "Configure Supabase before uploading a CV file." });
       event.target.value = "";
@@ -110,22 +119,15 @@ export default function Admin({ profile, onSave }) {
 
     try {
       const bucketName = "resumes";
-      const { data: bucketData } = await supabase.storage.listBuckets();
-      const bucketExists = bucketData?.some((bucket) => bucket.name === bucketName);
-
-      if (!bucketExists) {
-        throw new Error("Create the 'resumes' bucket in Supabase Storage first. The anon key cannot create storage buckets from the frontend.");
-      }
-
-      const safeFileName = `cv-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      const safeFileName = `cv-${Date.now()}.pdf`;
       const { data, error } = await supabase.storage.from(bucketName).upload(safeFileName, file, {
         cacheControl: "3600",
         upsert: true,
-        contentType: file.type || "application/pdf",
+        contentType: "application/pdf",
       });
 
       if (error) {
-        throw error;
+        throw new Error(error.message || "Unable to upload CV file.");
       }
 
       const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(data.path);
@@ -220,7 +222,7 @@ export default function Admin({ profile, onSave }) {
             <div className="flex flex-col gap-3 md:flex-row md:items-center">
               <input value={current.resumeUrl || ""} onChange={(e) => updateField("resumeUrl", e.target.value)} className={`${inputClass} flex-1`} placeholder="https://.../resume.pdf" />
               <label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-accent-project/40 bg-accent-project/10 px-4 py-2.5 text-xs font-medium uppercase tracking-[0.16em] text-accent-project">
-                <input type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleResumeUpload} />
+                <input type="file" accept=".pdf" className="hidden" onChange={handleResumeUpload} />
                 Upload CV
               </label>
             </div>
