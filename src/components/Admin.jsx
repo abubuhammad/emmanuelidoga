@@ -114,10 +114,7 @@ export default function Admin({ profile, onSave }) {
       const bucketExists = bucketData?.some((bucket) => bucket.name === bucketName);
 
       if (!bucketExists) {
-        const { error: createError } = await supabase.storage.createBucket(bucketName, { public: true });
-        if (createError) {
-          throw new Error(createError.message || "Unable to create the resumes bucket.");
-        }
+        throw new Error("Create the 'resumes' bucket in Supabase Storage first. The anon key cannot create storage buckets from the frontend.");
       }
 
       const safeFileName = `cv-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
