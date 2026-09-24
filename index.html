@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emmanuel A. Idoga — Portfolio</title>
+    <meta name="description" content="Portfolio of Emmanuel A. Idoga." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      // Applied before paint so there's no flash of the wrong theme.
+      try {
+        var saved = localStorage.getItem("theme");
+        var theme = saved || "dark";
+        if (theme === "dark") document.documentElement.classList.add("dark");
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="bg-paper text-[#10151A] font-body transition-colors dark:bg-bg dark:text-ink">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

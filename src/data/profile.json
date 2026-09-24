@@ -1,0 +1,137 @@
+{
+  "name": "Emmanuel A. Idoga",
+  "title": "Azure Cloud & DevOps Engineer",
+  "location": "Abuja, Federal Capital Territory, Nigeria",
+  "available": true,
+  "availabilityNote": "Open to remote and hybrid roles",
+  "email": "you@example.com",
+  "resumeUrl": "/resume.pdf",
+  "social": {
+    "linkedin": "https://www.linkedin.com/in/emmanuel-a-idoga",
+    "github": "",
+    "twitter": ""
+  },
+  "about": "I'm an Azure Cloud & DevOps Engineer with hands-on experience administering Microsoft Azure environments and building secure, scalable cloud infrastructure. Since 2024, I've worked as an Azure Administrator at Arodonna ICT Arena, gaining practical experience across Azure infrastructure, identity and access management, storage, compute, and cloud operations. My technical focus spans Azure infrastructure (VMs, VM Scale Sets, storage, load balancing), networking (VNets, subnets, NSGs, VNet peering and private connectivity), identity & security (Entra ID, Azure RBAC, managed identities), automation & infrastructure as code (Azure CLI, Terraform), DevOps (Git, GitHub Actions, CI/CD), and containers (Docker, Kubernetes). I also enjoy technical writing — translating complex cloud engineering concepts into practical, easy-to-follow guides. I'm interested in opportunities across Azure Engineering, Azure Administration, Cloud Infrastructure, DevOps, Cloud Operations and Infrastructure Automation. Let's connect.",
+  "stats": [
+    { "label": "Years in cloud/DevOps", "value": "2+" },
+    { "label": "Certifications", "value": "4" },
+    { "label": "Connections", "value": "400+" }
+  ],
+  "skills": [
+    "Microsoft Azure",
+    "Docker",
+    "Terraform"
+  ],
+  "experience": [
+    {
+      "role": "Cloud Administrator",
+      "company": "Arodonna ICT Arena · Contract",
+      "period": "Aug 2024 — Present · 2 yrs 2 mos",
+      "location": "Hybrid",
+      "summary": "Azure Administration & Cloud Infrastructure — the full description was cut off in the screenshot, add the rest from LinkedIn."
+    },
+    {
+      "role": "Azure Practitioner — Personal Projects",
+      "company": "Independent Projects / Azure Labs",
+      "period": "Aug 2022 — Present · 4 yrs 2 mos",
+      "location": "Nigeria",
+      "summary": "Independent, hands-on Azure labs and personal projects across infrastructure, networking, identity, and automation."
+    }
+  ],
+  "education": [
+    {
+      "school": "Federal University of Technology Minna",
+      "degree": "Degree / field of study not shown in the screenshot — add it here. Skills tagged: Terraform, Docker, +1 more.",
+      "period": ""
+    }
+  ],
+  "journey": [
+    {
+      "year": "2022",
+      "title": "Started hands-on Azure practice",
+      "description": "Began independent Azure labs and personal projects — infrastructure, networking, identity, and automation."
+    },
+    {
+      "year": "2024",
+      "title": "Became Cloud Administrator",
+      "description": "Joined Arodonna ICT Arena as Cloud Administrator (contract), working across Azure administration and cloud infrastructure."
+    },
+    {
+      "year": "2025",
+      "title": "Microsoft certified",
+      "description": "Earned Microsoft Certified: Azure Fundamentals, Azure Data Fundamentals, and Azure Administrator Associate (AZ-104). Currently pursuing AZ-400 (DevOps Engineer Expert)."
+    }
+  ],
+  "blog": [
+    {
+      "title": "Building a Full-Stack Cloud App on Azure",
+      "excerpt": "I just finished building a full-stack, serverless app on Azure — and wanted to share why the interesting part wasn't the finished product.",
+      "href": "#",
+      "date": "LinkedIn post"
+    },
+    {
+      "title": "I stopped deploying my Azure app by hand",
+      "excerpt": "Rebuilt a serverless three-tier Student Registration Portal as ARM templates — SQL, a serverless database, Storage, and Functions all defined as code instead of clicked together by hand, so anyone can reproduce it.",
+      "href": "#",
+      "date": "LinkedIn post"
+    }
+  ],
+  "portfolio": [
+    {
+      "id": "featured-arm-deploy",
+      "category": "project",
+      "title": "Automatically Deploy a Complete Azure App",
+      "description": "A serverless three-tier app (SQL, serverless database, Storage, Functions) deployed entirely via ARM templates instead of manual clicks in the Azure Portal — fully reproducible infrastructure as code.",
+      "tags": ["Azure", "ARM Templates", "IaC"],
+      "links": [{ "label": "Read article", "href": "#" }]
+    },
+    {
+      "id": "featured-linux-scaling-1",
+      "category": "project",
+      "title": "Scaling Linux Infrastructure on Azure",
+      "description": "Featured Medium article — the title was cut off in the LinkedIn screenshot. Add the full title and link here.",
+      "tags": ["Azure", "Linux"],
+      "links": [{ "label": "Read article", "href": "#" }]
+    },
+    {
+      "id": "featured-linux-scaling-2",
+      "category": "project",
+      "title": "Scaling Linux Infrastructure on Azure (2)",
+      "description": "A second featured article with a similar title — LinkedIn's preview cut both off identically. Add the real title and link here.",
+      "tags": ["Azure", "Linux"],
+      "links": [{ "label": "Read article", "href": "#" }]
+    },
+    {
+      "id": "cert-az104",
+      "category": "certification",
+      "title": "Microsoft Certified: Azure Administrator Associate (AZ-104)",
+      "description": "Issued by Microsoft. Credential ID and date not shown in the screenshot — add from \"Show all 4 licenses\" on LinkedIn.",
+      "tags": ["Azure"],
+      "links": [{ "label": "Show credential", "href": "#" }]
+    },
+    {
+      "id": "cert-az900",
+      "category": "certification",
+      "title": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "description": "Issued by Microsoft — Nov 2025. Credential ID E9C338EF68413D76.",
+      "tags": ["Azure"],
+      "links": [{ "label": "Show credential", "href": "#" }]
+    },
+    {
+      "id": "cert-dp900",
+      "category": "certification",
+      "title": "Microsoft Certified: Azure Data Fundamentals (DP-900)",
+      "description": "Issued by Microsoft — Oct 2025. Credential ID I3949B6518CA2F4FC.",
+      "tags": ["Azure", "Data"],
+      "links": [{ "label": "Show credential", "href": "#" }]
+    },
+    {
+      "id": "cert-fourth",
+      "category": "certification",
+      "title": "4th certification",
+      "description": "LinkedIn's Licenses & certifications section shows 4 total — only 3 were visible in the screenshots. Click \"Show all 4 licenses\" on the profile and add the last one here.",
+      "tags": [],
+      "links": []
+    }
+  ]
+}
