@@ -97,6 +97,54 @@ export default function Admin({ profile, onSave }) {
     });
   };
 
+  const handleResumeUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!window?.supabase && !window?.__SUPABASE__) {
+      setStatus({ type: "error", message: "Configure Supabase before uploading a CV file." });
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      const { supabase } = await import("../lib/supabase.js");
+      if (!supabase) {
+        throw new Error("Supabase is not configured for file uploads.");
+      }
+
+      const bucketName = "resumes";
+      const { data: bucketData } = await supabase.storage.listBuckets();
+      const bucketExists = bucketData?.some((bucket) => bucket.name === bucketName);
+
+      if (!bucketExists) {
+        const { error: createError } = await supabase.storage.createBucket(bucketName, { public: true });
+        if (createError) {
+          throw new Error(createError.message || "Unable to create the resumes bucket.");
+        }
+      }
+
+      const safeFileName = `cv-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+      const { data, error } = await supabase.storage.from(bucketName).upload(safeFileName, file, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: file.type || "application/pdf",
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(data.path);
+      updateField("resumeUrl", publicUrlData.publicUrl);
+      setStatus({ type: "success", message: "CV uploaded successfully and linked to the profile." });
+    } catch (error) {
+      setStatus({ type: "error", message: error.message || "Unable to upload CV file." });
+    } finally {
+      event.target.value = "";
+    }
+  };
+
   const handleSave = async (event) => {
     event.preventDefault();
     setSaving(true);
@@ -174,10 +222,17 @@ export default function Admin({ profile, onSave }) {
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">Availability note</span>
             <input value={current.availabilityNote || ""} onChange={(e) => updateField("availabilityNote", e.target.value)} className={inputClass} />
           </label>
-          <label className="space-y-2 md:col-span-2">
+          <div className="space-y-2 md:col-span-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">Resume URL</span>
-            <input value={current.resumeUrl || ""} onChange={(e) => updateField("resumeUrl", e.target.value)} className={inputClass} />
-          </label>
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <input value={current.resumeUrl || ""} onChange={(e) => updateField("resumeUrl", e.target.value)} className={`${inputClass} flex-1`} placeholder="https://.../resume.pdf" />
+              <label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-accent-project/40 bg-accent-project/10 px-4 py-2.5 text-xs font-medium uppercase tracking-[0.16em] text-accent-project">
+                <input type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleResumeUpload} />
+                Upload CV
+              </label>
+            </div>
+            <p className="text-[11px] text-muted">Upload a PDF or DOCX file to store the CV in the backend and automatically generate a public resume link.</p>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">

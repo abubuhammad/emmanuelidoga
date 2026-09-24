@@ -1,3 +1,1 @@
-import profile from "./profile.json";
-
-export default profile;
+export default {};

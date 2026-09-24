@@ -6,46 +6,41 @@ export default function AdminLogin({ onLogin }) {
   const [status, setStatus] = useState({ type: "idle", message: "" });
   const [loading, setLoading] = useState(false);
 
+  if (!supabaseEnabled || !supabase) {
+    return (
+      <div className="mx-auto max-w-md rounded-3xl border border-line bg-surface/80 p-6 shadow-2xl shadow-black/20">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent-project">Admin access</p>
+        <h1 className="mt-3 font-display text-3xl font-semibold">Configuration required</h1>
+        <p className="mt-3 text-sm text-muted">
+          Supabase authentication is not configured for this project yet. Add the Supabase environment variables to enable the admin login.
+        </p>
+      </div>
+    );
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setStatus({ type: "idle", message: "" });
 
     try {
-      if (supabaseEnabled && supabase) {
-        const email = form.username.trim();
+      const email = form.username.trim();
 
-        if (!email || !email.includes("@")) {
-          throw new Error("Use your admin email address when Supabase auth is enabled.");
-        }
-
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password: form.password,
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        onLogin?.();
-        setStatus({ type: "success", message: "Signed in with Supabase." });
-        return;
+      if (!email || !email.includes("@")) {
+        throw new Error("Use your admin email address.");
       }
 
-      const res = await fetch("/api/admin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: form.password,
       });
-      const data = await res.json().catch(() => ({}));
 
-      if (!res.ok) {
-        throw new Error(data.error || "Authentication failed.");
+      if (error) {
+        throw error;
       }
 
       onLogin?.();
-      setStatus({ type: "success", message: data.message || "Signed in." });
+      setStatus({ type: "success", message: "Signed in with Supabase." });
     } catch (error) {
       setStatus({ type: "error", message: error.message || "Could not sign in." });
     } finally {
@@ -58,18 +53,16 @@ export default function AdminLogin({ onLogin }) {
       <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent-project">Admin access</p>
       <h1 className="mt-3 font-display text-3xl font-semibold">Sign in</h1>
       <p className="mt-2 text-sm text-muted">
-        {supabaseEnabled
-          ? "Connected to Supabase. Sign in with your admin email and password to manage the live portfolio data."
-          : "Use your admin credentials to update the portfolio content."}
+        Connected to Supabase. Sign in with your admin email and password to manage the live portfolio data.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <label className="block space-y-2">
-          <span className="font-mono text-xs text-muted">{supabaseEnabled ? "Email" : "Username"}</span>
+          <span className="font-mono text-xs text-muted">Email</span>
           <input
             value={form.username}
             onChange={(e) => setForm((prev) => ({ ...prev, username: e.target.value }))}
-            placeholder={supabaseEnabled ? "admin@email.com" : "admin"}
+            placeholder="admin@email.com"
             className="surface w-full rounded-xl border px-3 py-2.5 text-sm outline-none placeholder:text-muted focus:border-accent-project"
           />
         </label>
@@ -101,12 +94,6 @@ export default function AdminLogin({ onLogin }) {
           }`}
         >
           {status.message}
-        </div>
-      )}
-
-      {!supabaseEnabled && (
-        <div className="mt-5 rounded-2xl border border-accent-project/30 bg-accent-project/5 p-3 text-xs text-muted">
-          Default demo credentials: username <span className="font-semibold text-ink">admin</span> and password <span className="font-semibold text-ink">admin123</span>
         </div>
       )}
     </div>

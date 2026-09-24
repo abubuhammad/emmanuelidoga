@@ -1,14 +1,24 @@
 import { IconDownload } from "./icons.jsx";
 
 export default function Resume({ profile }) {
+  const resumeUrl = profile.resumeUrl || "";
+
   return (
     <section>
       <div className="flex items-start justify-between gap-4">
         <h1 className="font-display text-3xl font-semibold">Resume</h1>
         <a
-          href={profile.resumeUrl}
-          download
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-xs font-medium text-bg dark:bg-ink dark:text-bg"
+          href={resumeUrl || undefined}
+          download={resumeUrl ? "Emmanuel-Idoga-CV.pdf" : undefined}
+          aria-disabled={!resumeUrl}
+          onClick={(event) => {
+            if (!resumeUrl) {
+              event.preventDefault();
+            }
+          }}
+          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium ${
+            resumeUrl ? "bg-ink text-bg dark:bg-ink dark:text-bg" : "pointer-events-none bg-muted/20 text-muted"
+          }`}
         >
           <IconDownload /> Download CV
         </a>
