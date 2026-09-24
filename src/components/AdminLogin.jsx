@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase, supabaseEnabled } from "../lib/supabase.js";
 
 export default function AdminLogin({ onLogin }) {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -11,6 +12,27 @@ export default function AdminLogin({ onLogin }) {
     setStatus({ type: "idle", message: "" });
 
     try {
+      if (supabaseEnabled && supabase) {
+        const email = form.username.trim();
+
+        if (!email || !email.includes("@")) {
+          throw new Error("Use your admin email address when Supabase auth is enabled.");
+        }
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password: form.password,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        onLogin?.();
+        setStatus({ type: "success", message: "Signed in with Supabase." });
+        return;
+      }
+
       const res = await fetch("/api/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,15 +57,19 @@ export default function AdminLogin({ onLogin }) {
     <div className="mx-auto max-w-md rounded-3xl border border-line bg-surface/80 p-6 shadow-2xl shadow-black/20">
       <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent-project">Admin access</p>
       <h1 className="mt-3 font-display text-3xl font-semibold">Sign in</h1>
-      <p className="mt-2 text-sm text-muted">Use your admin credentials to update the portfolio content.</p>
+      <p className="mt-2 text-sm text-muted">
+        {supabaseEnabled
+          ? "Connected to Supabase. Sign in with your admin email and password to manage the live portfolio data."
+          : "Use your admin credentials to update the portfolio content."}
+      </p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <label className="block space-y-2">
-          <span className="font-mono text-xs text-muted">Username</span>
+          <span className="font-mono text-xs text-muted">{supabaseEnabled ? "Email" : "Username"}</span>
           <input
             value={form.username}
             onChange={(e) => setForm((prev) => ({ ...prev, username: e.target.value }))}
-            placeholder="admin"
+            placeholder={supabaseEnabled ? "admin@email.com" : "admin"}
             className="surface w-full rounded-xl border px-3 py-2.5 text-sm outline-none placeholder:text-muted focus:border-accent-project"
           />
         </label>
@@ -78,9 +104,11 @@ export default function AdminLogin({ onLogin }) {
         </div>
       )}
 
-      <div className="mt-5 rounded-2xl border border-accent-project/30 bg-accent-project/5 p-3 text-xs text-muted">
-        Default demo credentials: username <span className="font-semibold text-ink">admin</span> and password <span className="font-semibold text-ink">admin123</span>
-      </div>
+      {!supabaseEnabled && (
+        <div className="mt-5 rounded-2xl border border-accent-project/30 bg-accent-project/5 p-3 text-xs text-muted">
+          Default demo credentials: username <span className="font-semibold text-ink">admin</span> and password <span className="font-semibold text-ink">admin123</span>
+        </div>
+      )}
     </div>
   );
 }

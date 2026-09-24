@@ -12,6 +12,7 @@ import Admin from "./components/Admin.jsx";
 import AdminLogin from "./components/AdminLogin.jsx";
 import Footer from "./components/Footer.jsx";
 import localProfile from "./data/profile.js";
+import { supabase, supabaseEnabled } from "./lib/supabase.js";
 
 export default function App() {
   const [profile, setProfile] = useState(localProfile);
@@ -23,6 +24,22 @@ export default function App() {
   const [checkingAdmin, setCheckingAdmin] = useState(true);
 
   const saveProfile = async (nextProfile) => {
+    if (supabaseEnabled && supabase) {
+      const { data, error } = await supabase
+        .from("profiles")
+        .upsert([{ id: "portfolio", content: nextProfile }], { onConflict: "id" })
+        .select("id, content")
+        .single();
+
+      if (error) {
+        throw new Error(error.message || "Unable to save profile to Supabase.");
+      }
+
+      const savedProfile = data?.content ?? nextProfile;
+      setProfile(savedProfile);
+      return savedProfile;
+    }
+
     const res = await fetch("/api/profile", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -39,6 +56,18 @@ export default function App() {
   };
 
   const checkAdminStatus = async () => {
+    if (supabaseEnabled && supabase) {
+      try {
+        const { data } = await supabase.auth.getSession();
+        setIsAdmin(Boolean(data.session));
+      } catch {
+        setIsAdmin(false);
+      } finally {
+        setCheckingAdmin(false);
+      }
+      return;
+    }
+
     try {
       const res = await fetch("/api/admin");
       const data = await res.json().catch(() => ({ authenticated: false }));
@@ -52,7 +81,11 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/admin", { method: "DELETE" });
+      if (supabaseEnabled && supabase) {
+        await supabase.auth.signOut();
+      } else {
+        await fetch("/api/admin", { method: "DELETE" });
+      }
     } finally {
       setIsAdmin(false);
       setTab("Portfolio");
@@ -61,14 +94,42 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/profile")
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data) => {
-        if (!cancelled) setProfile(data);
-      })
-      .catch(() => {});
 
-    checkAdminStatus();
+    const loadProfile = async () => {
+      if (supabaseEnabled && supabase) {
+        const { data, error } = await supabase.from("profiles").select("id, content").eq("id", "portfolio").maybeSingle();
+
+        if (!cancelled && !error && data?.content) {
+          setProfile(data.content);
+        }
+
+        if (!cancelled && !error && !data) {
+          const seeded = await supabase
+            .from("profiles")
+            .upsert([{ id: "portfolio", content: localProfile }], { onConflict: "id" })
+            .select("id, content")
+            .single();
+
+          if (!cancelled && !seeded.error && seeded.data?.content) {
+            setProfile(seeded.data.content);
+          }
+        }
+
+        checkAdminStatus();
+        return;
+      }
+
+      fetch("/api/profile")
+        .then((res) => (res.ok ? res.json() : Promise.reject()))
+        .then((data) => {
+          if (!cancelled) setProfile(data);
+        })
+        .catch(() => {});
+
+      checkAdminStatus();
+    };
+
+    loadProfile();
 
     return () => {
       cancelled = true;
