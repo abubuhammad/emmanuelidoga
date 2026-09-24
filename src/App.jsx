@@ -142,7 +142,7 @@ export default function App() {
     typeof window !== "undefined" ? localStorage.getItem("theme") || "dark" : "dark"
   );
   const [isAdmin, setIsAdmin] = useState(false);
-  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [checkingAdmin, setCheckingAdmin] = useState(false);
 
   const saveProfile = async (nextProfile) => {
     if (!supabaseEnabled || !supabase) {
@@ -247,10 +247,6 @@ export default function App() {
     document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("theme", theme);
   }, [theme]);
-
-  if (checkingAdmin) {
-    return <div className="flex min-h-screen items-center justify-center text-sm text-muted">Checking admin access…</div>;
-  }
 
   const content = (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
